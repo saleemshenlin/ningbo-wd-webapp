@@ -13,15 +13,17 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - name: Use Node.js ${{ matrix.node-version }} install pnpm
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-
+          cache: 'pnpm'
+          cache-dependency-path: common/config/pnpm-lock.yaml
+      
       - name: Cache pnpm modules
         id: cache-pnpm
         uses: actions/cache@v3
         with:
-          path: ~/.pnpm-store
+          path: common/config/pnpm-lock.yaml
           key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
@@ -49,7 +51,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
-          tag: v${{ $GITHUB_SHA }}
+          tag: v${{ GITHUB_SHA }}
           token: ${{ secrets.RELEASE_TOKEN }}
           removeArtifacts: true
 
