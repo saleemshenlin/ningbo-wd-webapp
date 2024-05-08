@@ -19,13 +19,13 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
           cache: 'pnpm'
-          cache-dependency-path: /home/runner/work/ningbo-wd-webapp/ningbo-wd-webapp/common/config/pnpm-lock.yaml
+          cache-dependency-path: common/config/pnpm-lock.yaml
       
       - name: Cache pnpm modules
         id: cache-pnpm
         uses: actions/cache@v3
         with:
-          path: /home/runner/work/ningbo-wd-webapp/ningbo-wd-webapp/common/config/pnpm-lock.yaml
+          path: common/config/pnpm-lock.yaml
           key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
             ${{ runner.os }}-pnpm-
