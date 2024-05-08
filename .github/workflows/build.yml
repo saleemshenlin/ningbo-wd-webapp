@@ -23,3 +23,11 @@ jobs:
 
       - name: rush build
         run: 'export NODE_OPTIONS=--max_old_space_size=8192 && node common/scripts/install-run-rush.js build --verbose -t "dhi-dss-ningbo-wd-webapp"'
+
+      - name: Create a Release
+        uses: ncipollo/release-action@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
+        with:
+          tag: v${{ steps.extract_version.outputs.version }}
+          token: ${{ secrets.RELEASE_TOKEN }}
