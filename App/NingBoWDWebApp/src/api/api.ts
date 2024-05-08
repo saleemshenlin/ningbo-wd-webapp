@@ -17,8 +17,6 @@ export const baseUrl = '/ningbo-wd'
 export const organizationUrl = `${baseUrl}/user-manager`
 export const connectBaseUrl = `${baseUrl}/user-manager/connect/userinfo` // 获得用户信息
 export const iotBaseUrl = `${baseUrl}/iot-service`
-export const wwtpPaaSBaseUrl = `${baseUrl}/wwtp-paas-main-bus-service`
-export const wwtpBaseUrl = `${baseUrl}/wwtp-paas-service`
 
 export const scenarioBaseUrl = `${baseUrl}/global-scenario-manager-service`
 export const modelDriverBaseUrl = `${baseUrl}/global-model-driver-service`
