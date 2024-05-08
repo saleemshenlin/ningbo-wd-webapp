@@ -49,10 +49,10 @@ jobs:
     
       - name: create build id
         id: build_step
-        run: echo "build_id=$RANDOM" >> $GITHUB_OUTPUT
+        run: echo "build_id=$RANDOM" >> $GITHUB_ENV
 
       - name: Start deploy
-        run: echo "Deploying build ${{ needs.build.outputs.build_id }}"
+        run: echo "Deploying build ${{ env.build_id }}"
       
       - name: Archive production files
         run: |
@@ -66,6 +66,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           artifacts: ./release/app.zip
-          tag: ${{ needs.build.outputs.build_id }}
+          tag: ${{ env.build_id }}
           token: ${{ secrets.RELEASE_TOKEN }}
           removeArtifacts: true
