@@ -1,0 +1,102 @@
+{
+    "name": "dhi-dss-api-store",
+    "private": true,
+    "version": "0.0.0",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc --noEmit && vite build",
+        "build-dhi": "vue-tsc --noEmit && vite build",
+        "preview": "vite preview",
+        "lint": "eslint --ext .ts,.vue --ignore-path .eslintignore --fix src",
+        "format": "prettier .  --write"
+    },
+    "files": [
+        "dist",
+        "src"
+    ],
+    "type": "module",
+    "main": "./dist/dhi-dss-store.umd.js",
+    "module": "./dist/dhi-dss-store.es.js",
+    "types": "./dist/main.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/dhi-dss-store.es.js",
+            "types": "./dist/main.d.ts"
+        },
+        "./scenario": {
+            "import": "./dist/dhi-dss-store.scenario.es.js",
+            "types": "./dist/Scenario/index.d.ts"
+        },
+        "./model-driver": {
+            "import": "./dist/dhi-dss-store.model-driver.es.js",
+            "types": "./dist/ModelDriver/index.d.ts"
+        },
+        "./iot": {
+            "import": "./dist/dhi-dss-store.iot.es.js",
+            "types": "./dist/Iot/index.d.ts"
+        },
+        "./compute-service": {
+            "import": "./dist/dhi-dss-store.compute-service.es.js",
+            "types": "./dist/ComputeService/index.d.ts"
+        },
+        "./wd-domain": {
+            "import": "./dist/dhi-dss-store.wd-domain.es.js",
+            "types": "./dist/WDDomain/index.d.ts"
+        },
+        "./model-Configuration": {
+            "import": "./dist/dhi-dss-store.model-Configuration.es.js",
+            "types": "./dist/ModelConfiguration/index.d.ts"
+        },
+        "./model-information": {
+            "import": "./dist/dhi-dss-store.model-information.es.js",
+            "types": "./dist/ModelInformation/index.d.ts"
+        },
+        "./result-service": {
+            "import": "./dist/dhi-dss-store.result-service.es.js",
+            "types": "./dist/ResultService/index.d.ts"
+        },
+        "./wwtp": {
+            "import": "./dist/dhi-dss-store.wwtp.es.js",
+            "types": "./dist/WWTP/index.d.ts"
+        },
+        "./model-point-map": {
+            "import": "./dist/dhi-dss-store.model-point-map.es.js",
+            "types": "./dist/ModelPointMap/index.d.ts"
+        },
+        "./gis-service": {
+            "import": "./dist/dhi-dss-store.gis-service.es.js",
+            "types": "./dist/GISService/index.d.ts"
+        },
+        "./identity-service": {
+            "import": "./dist/dhi-dss-store.identity-service.es.js",
+            "types": "./dist/IdentityService/index.d.ts"
+        }
+    },
+    "dependencies": {
+        "vue": "^3.4.3",
+        "lodash": "~4.17.21",
+        "@dhicn/domain-paas-sdk-ts": "^2.6.7",
+        "pinia": "2.1.3",
+        "@dhicn/helper": "~0.0.14"
+    },
+    "devDependencies": {
+        "@types/lodash": "~4.14.191",
+        "@vitejs/plugin-vue": "^4.5.2",
+        "typescript": "^5.1.3",
+        "vite": "^5.1.4",
+        "vue-tsc": "^1.8.25",
+        "vite-plugin-dts": "^3.7.3",
+        "eslint": "~8.23.0",
+        "vite-plugin-eslint": "~1.8.1",
+        "eslint-config-standard-with-typescript": "^43.0.0",
+        "eslint-plugin-n": "^16.6.2",
+        "eslint-plugin-promise": "^6.1.1",
+        "@typescript-eslint/parser": "~6.4.0",
+        "@typescript-eslint/eslint-plugin": "~6.4.0",
+        "eslint-plugin-import": "~2.26.0",
+        "prettier": "~2.7.1",
+        "eslint-config-prettier": "~8.5.0",
+        "eslint-plugin-prettier": "~4.2.1",
+        "dayjs": "~1.11.10"
+    }
+}

@@ -1,0 +1,11 @@
+@import './variables';
+
+.arco-layout {
+    width: 100%;
+    @extend %h100;
+    overflow: hidden;
+}
+
+.arco-modal {
+    width: auto;
+}

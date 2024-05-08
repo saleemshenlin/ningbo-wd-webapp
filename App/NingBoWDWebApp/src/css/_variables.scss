@@ -1,0 +1,12 @@
+$bgColor: #060621;
+$bgLight: #061940;
+$bgDark: #000c18;
+$fontColor: #ebeef5;
+
+%h100 {
+    height: 100%;
+}
+
+@mixin transition-ease($duration) {
+    transition: all $duration ease-in-out;
+}

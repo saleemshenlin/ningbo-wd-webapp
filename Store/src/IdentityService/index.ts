@@ -1,0 +1,6 @@
+export * from './IdentityServiceApi/index'
+export * from './IdentityServiceApi/type'
+export * from './OrganizationManangerApi/index'
+export * from './OrganizationManangerApi/type'
+export * from './CustomeManage/index'
+export * from './CustomeManage/type'

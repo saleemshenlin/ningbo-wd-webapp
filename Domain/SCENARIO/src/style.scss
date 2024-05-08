@@ -1,0 +1,33 @@
+.scenario-editor > .header {
+    width: 100%;
+
+    .back-item {
+        cursor: pointer !important;
+    }
+
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+
+    .navigation_title {
+        font-style: normal;
+        font-weight: bold;
+    }
+    .base-info {
+        box-sizing: border-box;
+        background: var(--color-bg-3);
+        width: 100%;
+        padding: 16px 0;
+    }
+    .date {
+        box-sizing: border-box;
+        width: 100%;
+        background: var(--color-bg-3);
+    }
+}
+
+.scenario-editor > .footer {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+}

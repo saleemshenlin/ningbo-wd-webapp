@@ -1,0 +1,126 @@
+{
+    "name": "dhi-dss-domain-wd",
+    "private": true,
+    "version": "0.0.0",
+    "type": "module",
+    "scripts": {
+        "dev": "vite",
+        "build": "vue-tsc && vite build",
+        "build-dhi": "vue-tsc && vite build",
+        "preview": "vite preview",
+        "lint": "eslint --ext .ts,.vue --ignore-path .eslintignore --fix src",
+        "format": "prettier .  --write"
+    },
+    "files": [
+        "dist",
+        "src"
+    ],
+    "module": "./dist/dhi.dss.domain-wd.es.js",
+    "types": "./dist/export.d.ts",
+    "exports": {
+        ".": {
+            "import": "./dist/dhi.dss.domain-wd.es.js",
+            "types": "./dist/export.d.ts"
+        },
+        "./alarm-log": {
+            "import": "./dist/dhi.dss.domain-wd.alarm-log.es.js",
+            "types": "./dist/components/AlarmLog/index.d.ts"
+        },
+        "./animation-control": {
+            "import": "./dist/dhi.dss.domain-wd.animation-control.es.js",
+            "types": "./dist/components/AnimationControl/index.d.ts"
+        },
+        "./daily-water-volume": {
+            "import": "./dist/dhi.dss.domain-wd.daily-water-volume.es.js",
+            "types": "./dist/components/DailyWaterVolume/index.d.ts"
+        },
+        "./device-ts-data": {
+            "import": "./dist/dhi.dss.domain-wd.device-ts-data.es.js",
+            "types": "./dist/components/DeviceTSData/index.d.ts"
+        },
+        "./map-layer-control": {
+            "import": "./dist/dhi.dss.domain-wd.map-layer-control.es.js",
+            "types": "./dist/components/MapLayerControl/index.d.ts"
+        },
+        "./map-legend": {
+            "import": "./dist/dhi.dss.domain-wd.map-legend.es.js",
+            "types": "./dist/components/MapLegend/index.d.ts"
+        },
+        "./map-popup": {
+            "import": "./dist/dhi.dss.domain-wd.map-popup.es.js",
+            "types": "./dist/components/Popup/index.d.ts"
+        },
+        "./profile-data": {
+            "import": "./dist/dhi.dss.domain-wd.profile-data.es.js",
+            "types": "./dist/components/ProfileData/index.d.ts"
+        },
+        "./profile-map": {
+            "import": "./dist/dhi.dss.domain-wd.profile-map.es.js",
+            "types": "./dist/components/ProfileMap/index.d.ts"
+        },
+        "./result-item": {
+            "import": "./dist/dhi.dss.domain-wd.result-item.es.js",
+            "types": "./dist/components/ResultItem/index.d.ts"
+        },
+        "./result-map": {
+            "import": "./dist/dhi.dss.domain-wd.result-map.es.js",
+            "types": "./dist/components/ResultMap/index.d.ts"
+        },
+        "./result-map-valve": {
+            "import": "./dist/dhi.dss.domain-wd.result-map-valve.es.js",
+            "types": "./dist/components/ResultMapValve/index.d.ts"
+        },
+        "./result-statistic": {
+            "import": "./dist/dhi.dss.domain-wd.result-statistic.es.js",
+            "types": "./dist/components/ResultStatistic/index.d.ts"
+        },
+        "./tank-storage": {
+            "import": "./dist/dhi.dss.domain-wd.tank-storage.es.js",
+            "types": "./dist/components/TankStorage/index.d.ts"
+        },
+        "./layer-control": {
+            "import": "./dist/dhi.dss.domain-wd.layer-control.es.js",
+            "types": "./dist/components/LayerControl/index.d.ts"
+        },
+        "./dist/style.css": {
+            "import": "./dist/style.css",
+            "require": "./dist/style.css"
+        }
+    },
+    "dependencies": {
+        "vue": "^3.4.3",
+        "lodash": "~4.17.21",
+        "@dhicn/domain-paas-sdk-ts": "^2.6.7",
+        "@dhicn/helper": "~0.0.14",
+        "@dhicn/chart": "~0.0.12",
+        "dhi-dss-mf-map-arcgis": "workspace:*",
+        "dhi-dss-mf-layout": "workspace:*"
+    },
+    "devDependencies": {
+        "@vitejs/plugin-vue": "^4.5.2",
+        "@arco-design/web-vue": "~2.55.0",
+        "typescript": "^5.1.3",
+        "vite": "^5.1.4",
+        "vue-tsc": "^1.8.25",
+        "eslint": "~8.23.0",
+        "vite-plugin-eslint": "~1.8.1",
+        "eslint-plugin-vue": "~9.4.0",
+        "eslint-config-standard-with-typescript": "^43.0.0",
+        "eslint-plugin-n": "^16.6.2",
+        "eslint-plugin-promise": "^6.1.1",
+        "@typescript-eslint/parser": "~6.4.0",
+        "@typescript-eslint/eslint-plugin": "~6.4.0",
+        "eslint-plugin-import": "~2.26.0",
+        "prettier": "~2.7.1",
+        "eslint-config-prettier": "~8.5.0",
+        "eslint-plugin-prettier": "~4.2.1",
+        "@arco-plugins/vite-vue": "~1.4.5",
+        "consola": "~2.15.3",
+        "sass": "^1.69.6",
+        "@types/lodash": "~4.14.185",
+        "vite-plugin-compression": "~0.5.1",
+        "vite-plugin-dts": "^3.7.3",
+        "@types/node": "^18.0.0",
+        "dayjs": "~1.11.10"
+    }
+}
