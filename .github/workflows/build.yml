@@ -16,7 +16,6 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm install -g pnpm
 
       - name: Cache pnpm modules
         id: cache-pnpm
@@ -52,6 +51,8 @@ jobs:
         with:
           tag: v${{ steps.extract_version.outputs.version }}
           token: ${{ secrets.RELEASE_TOKEN }}
+          removeArtifacts: true
+
 
       - name: Upload Release Asset
         id: upload-release-asset 
