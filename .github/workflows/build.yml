@@ -10,6 +10,9 @@ jobs:
       matrix:
         node-version: [20.x]
 
+    outputs:
+      build_id: ${{ steps.build_step.outputs.build_id }}
+
     steps:
       - uses: actions/checkout@v4
       - uses: pnpm/action-setup@v2
@@ -21,21 +24,23 @@ jobs:
           cache: 'pnpm'
           cache-dependency-path: common/config/rush/pnpm-lock.yaml
       
-      - name: Cache pnpm modules
-        id: cache-pnpm
-        uses: actions/cache@v3
-        with:
-          path: common/config/rush/pnpm-lock.yaml
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-
-
       - name: rush install
         run: 'node common/scripts/install-run-rush.js install --to "dhi-dss-ningbo-wd-webapp" --debug-package-manager --max-install-attempts 3'
 
       - name: rush build
         run: 'export NODE_OPTIONS=--max_old_space_size=8192 && node common/scripts/install-run-rush.js build --verbose -t "dhi-dss-ningbo-wd-webapp"'
     
+      - name: create build id
+        id: build_step
+        run: echo "build_id=$RANDOM" >> $GITHUB_OUTPUT
+
+  deploy:  
+    needs: build
+    runs-on: ubuntu-latest
+    steps:
+      - name: Start deploy
+        run: echo "Deploying build ${{ needs.build.outputs.build_id }}"
+      
       - name: Archive production files
         run: |
           mkdir release
@@ -48,6 +53,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
           artifacts: ./release/app.zip
-          tag: ${{ github.sha }}
+          tag: ${{ needs.build.outputs.build_id }}
           token: ${{ secrets.RELEASE_TOKEN }}
           removeArtifacts: true
