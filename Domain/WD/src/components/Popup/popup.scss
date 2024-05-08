@@ -1,0 +1,29 @@
+.popup-content_feature {
+    .feature-info {
+        margin: 10px 0;
+        .feature-info-raw {
+            display: flex;
+            font-size: 12px;
+            height: 16px;
+            line-height: 16px;
+            .label {
+                color: rgb(var(--primary-6));
+                text-align: end;
+                flex: 1;
+                margin-right: 4px;
+            }
+            .value {
+                flex: 1;
+                margin-left: 4px;
+            }
+        }
+    }
+    .select-result_type {
+        margin: 10px 0;
+        text-align: center;
+    }
+    .chart_component {
+        width: 400px;
+        height: 180px;
+    }
+}
