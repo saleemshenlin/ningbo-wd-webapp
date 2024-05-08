@@ -1,0 +1,22 @@
+on:
+  pull_request:
+    branches: [main]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [20.x]
+
+    steps:
+      - uses: actions/checkout@v3
+      - name: Use Node.js ${{ matrix.node-version }} install pnpm
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+      - run: npm install -g pnpm
+      
+      - name: rush build
+        run: 'export NODE_OPTIONS=--max_old_space_size=8192 && node common/scripts/install-run-rush.js build --verbose -t "dhi-dss-app-ningbowd-webapp"'
