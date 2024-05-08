@@ -10,38 +10,50 @@ jobs:
       matrix:
         node-version: [20.x]
 
+    outputs:
+      build_id: ${{ steps.build_step.outputs.build_id }}
+
     steps:
-      - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v2
-          with:
-            version: 8.6.7
-      - uses: actions/setup-node@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Node.js
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: 'pnpm'
-          cache-dependency-path: /home/runner/work/ningbo-wd-webapp/ningbo-wd-webapp/common/config/pnpm-lock.yaml
-      
-      - name: Cache pnpm modules
-        id: cache-pnpm
-        uses: actions/cache@v3
+
+      - uses: pnpm/action-setup@v4
+        name: Install pnpm
         with:
-          path: /home/runner/work/ningbo-wd-webapp/ningbo-wd-webapp/common/config/pnpm-lock.yaml
-          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          version: 8
+          run_install: false
+
+      - name: Get pnpm store directory
+        shell: bash
+        run: |
+          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
+
+      - uses: actions/cache@v4
+        name: Setup pnpm cache
+        with:
+          path: ${{ env.STORE_PATH }}
+          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
           restore-keys: |
-            ${{ runner.os }}-pnpm-
-
-      - name: Setup pnpm
-        if: steps.cache-pnpm.outputs.cache-hit != 'true'
-        uses: pnpm/action-setup@v2
-        with:
-          version: latest
-
+            ${{ runner.os }}-pnpm-store-
+      
       - name: rush install
         run: 'node common/scripts/install-run-rush.js install --to "dhi-dss-ningbo-wd-webapp" --debug-package-manager --max-install-attempts 3'
 
       - name: rush build
         run: 'export NODE_OPTIONS=--max_old_space_size=8192 && node common/scripts/install-run-rush.js build --verbose -t "dhi-dss-ningbo-wd-webapp"'
     
+      - name: create build id
+        id: build_step
+        run: echo "build_id=$RANDOM" >> $GITHUB_ENV
+
+      - name: Start deploy
+        run: echo "Deploying build ${{ env.build_id }}"
+      
       - name: Archive production files
         run: |
           mkdir release
@@ -53,18 +65,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
-          tag: $GITHUB_SHA
+          artifacts: ./release/app.zip
+          tag: ${{ env.build_id }}
           token: ${{ secrets.RELEASE_TOKEN }}
           removeArtifacts: true
-
-
-      - name: Upload Release Asset
-        id: upload-release-asset 
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }} # 这是从create_release步骤获取的URL
-          asset_path: ./release/app.zip
-          asset_name: app.zip
-          asset_content_type: application/zip
