@@ -18,6 +18,21 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install -g pnpm
 
+      - name: Cache pnpm modules
+        id: cache-pnpm
+        uses: actions/cache@v3
+        with:
+          path: ~/.pnpm-store
+          key: ${{ runner.os }}-pnpm-${{ hashFiles('**/pnpm-lock.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-pnpm-
+
+      - name: Setup pnpm
+        if: steps.cache-pnpm.outputs.cache-hit != 'true'
+        uses: pnpm/action-setup@v2
+        with:
+          version: latest
+
       - name: rush install
         run: 'node common/scripts/install-run-rush.js install --to "dhi-dss-ningbo-wd-webapp" --debug-package-manager --max-install-attempts 3'
 
