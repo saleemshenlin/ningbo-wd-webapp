@@ -57,7 +57,7 @@ jobs:
       - name: Archive production files
         run: |
           mkdir release
-          zip -r release/app.zip App/NingBoWDWebApp/dist/* # 假设你的构建产物在dist目录下，根据实际情况调整
+          zip -r -j release/app.zip App/NingBoWDWebApp/dist/* # 假设你的构建产物在dist目录下，根据实际情况调整
         shell: bash
       
       - name: Create a Release
