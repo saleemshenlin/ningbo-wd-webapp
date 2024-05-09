@@ -57,7 +57,7 @@ jobs:
       - name: Archive production files
         run: |
           mkdir release
-          zip -r -j release/app.zip App/NingBoWDWebApp/dist/* # 假设你的构建产物在dist目录下，根据实际情况调整
+          zip -r  App/NingBoWDWebApp/dist/dist.zip App/NingBoWDWebApp/dist/* # 假设你的构建产物在dist目录下，根据实际情况调整
         shell: bash
       
       - name: Create a Release
@@ -65,7 +65,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.RELEASE_TOKEN }}
         with:
-          artifacts: ./release/app.zip
+          artifacts: App/NingBoWDWebApp/dist/dist.zip
           tag: ${{ env.build_id }}
           token: ${{ secrets.RELEASE_TOKEN }}
           removeArtifacts: true
