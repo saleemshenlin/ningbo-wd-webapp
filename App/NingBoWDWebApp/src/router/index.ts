@@ -2,13 +2,15 @@ import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router'
 import Layout from '@/components/Layout/index.vue'
 import { useUserStore } from '@/store/User'
 import { LoginInBack } from 'dhi-dss-mf-login'
-import { apiHelper, baseUrl } from '@/api/api'
+import { baseUrl } from '@/api/api'
+import { APP_TENANT, APP_NAME, APP_USER, APP_PWD } from '@/constant'
+import { apiHelper } from '@/main'
 
 export const homeRoutes: RouteRecordRaw[] = [
     {
         path: 'visualization',
         name: 'visualization',
-        component: () => import('@/components/not-found/index.vue'),
+        component: () => import('@/views/online-warning/index.vue'),
         meta: {
             title: '在线报警预测',
         },
@@ -108,24 +110,22 @@ router.beforeEach(async (to, from) => {
             apiHelper,
             rep,
         )
+    } else if (to.path.includes('login')) {
+        return true
     } else {
         const rep = await LoginInBack.loginInBackground(
             {
-                tenantId: '3a126e29-7c80-5b8c-b855-4f71f1747f3e',
-                tenantName: 'nb-wd-webapp',
+                tenantId: APP_TENANT,
+                tenantName: APP_NAME,
             },
             {
-                username: 'ningbowd',
-                password: '955555=hot',
-                tenantId: '3a126e29-7c80-5b8c-b855-4f71f1747f3e',
+                username: APP_USER,
+                password: APP_PWD,
+                tenantId: APP_TENANT,
             },
             baseUrl,
         )
-        await userStore.projectInitialization(
-            '3a126e29-7c80-5b8c-b855-4f71f1747f3e',
-            apiHelper,
-            rep,
-        )
+        await userStore.projectInitialization(APP_TENANT, apiHelper, rep)
     }
 
     return true

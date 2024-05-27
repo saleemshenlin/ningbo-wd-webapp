@@ -1,0 +1,178 @@
+.feature-info {
+    position: absolute;
+    width: 520px;
+    right: 16px;
+    top: 16px;
+    background-color: #ffffff;
+    padding: 8px 16px 16px 16px;
+
+    .feature-content {
+        display: flex;
+        margin-top: 16px;
+
+        .arco-divider-vertical {
+            margin: 12px 0;
+            height: 36px;
+            max-width: 2px;
+            width: 2px;
+        }
+    }
+
+    .cell {
+        flex: 1;
+        text-align: center;
+        font-size: 18px;
+        line-height: 18px;
+
+        .label {
+            color: #0082cf;
+            margin: 8px 0;
+        }
+    }
+}
+
+.feature-chart {
+    position: absolute;
+    width: 552px;
+    right: 16px;
+    top: 149px;
+    height: calc(100% - 170px);
+    overflow-y: auto;
+
+    .feature-chart-item {
+        padding: 8px 16px 16px 16px;
+        margin-top: 16px;
+        min-height: 203px;
+        height: calc(100% / 3 - 40px);
+        background-color: #ffffff;
+
+        .chart-content {
+            height: calc(100% - 32px);
+            .chart_component {
+                height: calc(100% - 10px);
+                margin-top: 10px;
+            }
+        }
+    }
+}
+
+.select-chart {
+    height: calc(100% - 134px);
+    top: 113px;
+}
+
+.station-select {
+    position: absolute;
+    width: 520px;
+    right: 16px;
+    top: 16px;
+    background-color: #ffffff;
+    padding: 8px 16px 16px 16px;
+}
+
+.station-info {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: auto;
+
+    .feature-info,
+    .feature-chart {
+        position: relative;
+    }
+    .feature-chart {
+        top: 32px;
+        .feature-chart-item {
+            height: 200px;
+            &:first-child {
+                margin-top: 0;
+            }
+        }
+    }
+}
+
+.alarm-info {
+    position: absolute;
+    left: 80px;
+    bottom: 10px;
+    background-color: #ffffff;
+    padding: 8px 16px 16px 16px;
+
+    .feature-content-wrapper {
+        width: 900px;
+        display: flex;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    .feature-content-cell {
+        display: inline-block;
+        margin-top: 16px;
+        margin-right: 16px;
+    }
+
+    .feature-content {
+        width: 100%;
+        display: flex;
+        box-sizing: border-box;
+        border: 1px solid #dadada;
+
+        &.active {
+            border: 2px solid var(--color-danger-light-4);
+        }
+
+        .arco-divider-vertical {
+            margin: 12px 0;
+            height: 36px;
+            max-width: 2px;
+            width: 2px;
+        }
+    }
+
+    .feature-content-flow-up {
+        border: 4px solid rgb(var(--red-6));
+    }
+
+    .cell {
+        flex: 1;
+        text-align: center;
+        font-size: 14px;
+        line-height: 14px;
+        width: 100px;
+        margin: 4px;
+
+        .label {
+            color: #0082cf;
+            margin: 8px 0;
+        }
+        .adviser {
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            .pressure {
+                color: rgb(var(--purple-6));
+            }
+            .flow-up {
+                color: rgb(var(--red-6));
+            }
+            .flow-down {
+                color: rgb(var(--green-6));
+            }
+        }
+    }
+}
+
+.feature-info,
+.feature-chart,
+.station-select,
+.alarm-info {
+    .header {
+        font-size: 20px;
+        height: 32px;
+        line-height: 32px;
+        border-bottom: 1px solid #dadada;
+    }
+}

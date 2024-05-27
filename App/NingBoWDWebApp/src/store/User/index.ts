@@ -5,6 +5,7 @@ import { UserState } from './type'
 import { defineStore } from 'pinia'
 import { Message } from '@arco-design/web-vue'
 import { getAuthFromStorage, tenantInfo } from './config'
+import { useAppStore } from '../AppStore'
 
 export const useUserStore = defineStore('user', {
     state: (): UserState => ({
@@ -79,8 +80,10 @@ export const useUserStore = defineStore('user', {
                     if (tenantId !== initAuth.user.tenantId) {
                         initAuth.user.tenantId = tenantId
                     }
-                    this.setAuth(initAuth, this.api as ApiHelperExtend)
+                    this.setAuth(initAuth, $api as ApiHelperExtend)
                     // app挂载前需要准备好的接口数据
+                    const projectStore = useAppStore()
+                    await projectStore.fetchBasicGIS($api as ApiHelperExtend)
                 }
             } else {
                 await router.replace('/login')
