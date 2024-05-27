@@ -1,5 +1,5 @@
 {
-    "name": "dhi-dss-ningbo-wd-webapp",
+    "name": "2024.external.wd.ningbo.webapp",
     "private": true,
     "version": "0.0.0",
     "type": "module",
@@ -24,7 +24,8 @@
         "dhi-dss-api-store": "workspace:*",
         "dhi-dss-mf-login": "workspace:*",
         "dhi-dss-domain-scenario": "workspace:*",
-        "dhi-dss-mf-layout": "workspace:*"
+        "dhi-dss-mf-layout": "workspace:*",
+        "dhi-dss-mf-map-arcgis": "workspace:*"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^4.5.2",

@@ -42,10 +42,10 @@ jobs:
             ${{ runner.os }}-pnpm-store-
       
       - name: rush install
-        run: 'node common/scripts/install-run-rush.js install --to "dhi-dss-ningbo-wd-webapp" --debug-package-manager --max-install-attempts 3'
+        run: 'node common/scripts/install-run-rush.js install --to "2024.external.wd.ningbo.webapp" --debug-package-manager --max-install-attempts 3'
 
       - name: rush build
-        run: 'export NODE_OPTIONS=--max_old_space_size=8192 && node common/scripts/install-run-rush.js build --verbose -t "dhi-dss-ningbo-wd-webapp"'
+        run: 'export NODE_OPTIONS=--max_old_space_size=8192 && node common/scripts/install-run-rush.js build --verbose -t "2024.external.wd.ningbo.webapp"'
     
       - name: create build id
         id: build_step
