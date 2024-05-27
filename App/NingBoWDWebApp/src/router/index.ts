@@ -5,7 +5,7 @@ export const homeRoutes: RouteRecordRaw[] = [
     {
         path: 'visualization',
         name: 'visualization',
-        component: () => import('@/components/not-found/index.vue'),
+        component: () => import('@/views/online-warning/index.vue'),
         meta: {
             title: '在线报警预测',
         },

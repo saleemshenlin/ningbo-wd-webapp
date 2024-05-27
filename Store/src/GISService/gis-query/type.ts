@@ -8,6 +8,8 @@ export type WDResultType =
     | 'riverDischarge'
     | 'device'
     | 'dma'
+    | 'wd-pipe'
+    | 'wd-junction'
 
 export interface GisQueryApiState {
     gisMap: Map<WDResultType, any>

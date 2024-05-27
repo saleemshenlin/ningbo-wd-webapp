@@ -44,6 +44,20 @@ export const useGisQueryApiStore = defineStore(StoreName, {
                     }
                 }
                 // 以下是供水wd的接口
+                if (options.includes('wd-pipe')) {
+                    const fetchPipeRep = await $api.apiGisV1GetWdPipeGisGet(templateScenarioId)
+                    if (fetchPipeRep.data.length > 0) {
+                        this.gisMap.set('wd-pipe', fetchPipeRep.data ?? '')
+                    }
+                }
+                if (options.includes('wd-junction')) {
+                    const fetchJunctionRep = await $api.apiGisV1GetWdJunctionGisGet(
+                        templateScenarioId,
+                    )
+                    if (fetchJunctionRep.data.length > 0) {
+                        this.gisMap.set('wd-junction', fetchJunctionRep.data ?? '')
+                    }
+                }
                 if (options.includes('pump')) {
                     const fetchPumpRep = await $api.apiGisV1GetWdPumpGisGet(templateScenarioId)
                     if (fetchPumpRep.data.length > 0) {

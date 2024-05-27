@@ -16,15 +16,19 @@
         "pinia": "2.1.3",
         "lodash": "~4.17.21",
         "vue-router": "~4.1.5",
+        "maplibre-gl": "^4.1.0",
         "@arco-design/web-vue": "~2.55.0",
         "dayjs": "~1.11.10",
+        "localforage": "~1.10.0",
         "@dhicn/helper": "~0.0.14",
         "@dhicn/domain-paas-sdk-ts": "^2.6.7",
         "@dhicn/chart": "~0.0.12",
         "dhi-dss-api-store": "workspace:*",
         "dhi-dss-mf-login": "workspace:*",
         "dhi-dss-domain-scenario": "workspace:*",
-        "dhi-dss-mf-layout": "workspace:*"
+        "dhi-dss-mf-layout": "workspace:*",
+        "dhi-dss-mf-map-maplibre": "workspace:*",
+        "dhi-dss-domain-wd": "workspace:*"
     },
     "devDependencies": {
         "@vitejs/plugin-vue": "^4.5.2",

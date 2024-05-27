@@ -5,9 +5,17 @@ import { OrganizationManangerApi } from '@dhicn/domain-paas-sdk-ts/identity-serv
 import { IToken, IUser } from 'dhi-dss-mf-login'
 import { isBoolean, isString } from 'lodash'
 import { UseMessage } from 'dhi-dss-mf-layout'
-import { useUserStore } from '../store/User'
 import { ApiHelper } from '@dhicn/domain-paas-sdk-ts/sdk-helper'
-import { NetworkApi } from '@dhicn/domain-paas-sdk-ts/result-service'
+import { M2DApi, UrbanWdResultAnalysisApi } from '@dhicn/domain-paas-sdk-ts/result-service'
+import { LegendApi } from '@dhicn/domain-paas-sdk-ts/model-configuration'
+import {
+    GISApi,
+    OnlineApi,
+    AlarmLogApi,
+    AlarmConfigApi,
+    IndicatorConfigApi,
+} from '@dhicn/domain-paas-sdk-ts/wd-domain'
+import { GisQueryApi } from '@dhicn/domain-paas-sdk-ts/gis-service'
 
 const { useErrorMessage } = UseMessage
 
@@ -17,17 +25,29 @@ export const baseUrl = '/ningbo-wd'
 export const organizationUrl = `${baseUrl}/user-manager`
 export const connectBaseUrl = `${baseUrl}/user-manager/connect/userinfo` // 获得用户信息
 export const iotBaseUrl = `${baseUrl}/iot-service`
-
+export const domainWDBaseUrl = `${baseUrl}/wd-domain-service`
 export const scenarioBaseUrl = `${baseUrl}/global-scenario-manager-service`
 export const modelDriverBaseUrl = `${baseUrl}/global-model-driver-service`
 export const globalResultServiceBaseUrl = `${baseUrl}/global-result-service`
+export const globalModelConfigurationServiceBaseUrl = `${baseUrl}/global-model-configuration-service`
+export const gisServiceUrl = `${baseUrl}/gis-service`
 
 export interface IApi {
     setAuth: (token: IToken) => void
     changeTenantId: (tenantId: string) => void
-    iot_data: IotApi.DataApi
-    iot_ts: IotApi.TelemetryApi
-    iot_opc: IotApi.OpcuaApi
+    gis: GisQueryApi
+    iot: {
+        data: IotApi.DataApi
+        ts: IotApi.TelemetryApi
+        opc: IotApi.OpcuaApi
+    }
+    wd: {
+        gis: GISApi
+        online: OnlineApi
+        alarmLog: AlarmLogApi
+        alarmConfig: AlarmConfigApi
+        indicatorConfig: IndicatorConfigApi
+    }
     scenario: {
         manager: ScenarioApi.ScenarioManagerApi
         library: ScenarioApi.LibraryApi
@@ -37,7 +57,11 @@ export interface IApi {
     }
     organization: OrganizationManangerApi
     global_result_service: {
-        network: NetworkApi
+        wd: UrbanWdResultAnalysisApi
+        mesh2D: M2DApi
+    }
+    global_model_configuration_service: {
+        legend: LegendApi
     }
 }
 
@@ -64,11 +88,16 @@ export class ApiHelperExtend extends ApiHelper {
                     } else {
                         const { headers } = response.config
                         const { showErrMsg } = headers ?? {}
-                        console.log('showErrMsg:', showErrMsg)
+                        logger.debug('showErrMsg:', showErrMsg)
                         if (showErrMsg as boolean) {
-                            useErrorMessage(message)
+                            if (isString(message)) {
+                                useErrorMessage(message)
+                            } else {
+                                const msg = data.join(',')
+                                useErrorMessage(msg)
+                            }
                         } else {
-                            console.error(
+                            logger.error(
                                 '需要自行处理错误信息 Request Error :>> ',
                                 response,
                                 message,
@@ -81,17 +110,18 @@ export class ApiHelperExtend extends ApiHelper {
                 }
             },
             (error) => {
-                console.error('RequestError :>> ', error)
+                logger.error('RequestError :>> ', error)
                 const { code } = error.response?.data
                 if (error.response?.status === 403 || code === 'gateway_forbidden_authorization') {
-                    console.log('403 error :>> ', error.response)
-                    const userStore = useUserStore()
-                    userStore.forbiddenAuthLogout().catch((e) => {
-                        console.error('403 log out error :>> ', e)
-                    })
+                    logger.debug('403 error :>> ', error.response)
+                    // TODO:这里需要加入判断
+                    // const userStore = useUserStore()
+                    // userStore.forbiddenAuthLogout().catch((e) => {
+                    //     logger.error('403 log out error :>> ', e)
+                    // })
                 } else {
                     if (error.response !== undefined) {
-                        const { message } = error.response.data as any
+                        const { message } = error.response.data
                         if (isString(message)) {
                             useErrorMessage(message)
                         } else {
@@ -112,10 +142,19 @@ export class ApiHelperExtend extends ApiHelper {
                 console.log('setAuth', token)
                 this.setAuth(token)
             },
-
-            iot_data: new IotApi.DataApi(iotBaseUrl, this.axiosInstance),
-            iot_ts: new IotApi.TelemetryApi(iotBaseUrl, this.axiosInstance),
-            iot_opc: new IotApi.OpcuaApi(iotBaseUrl, this.axiosInstance),
+            gis: new GisQueryApi(gisServiceUrl, this.axiosInstance),
+            iot: {
+                data: new IotApi.DataApi(iotBaseUrl, this.axiosInstance),
+                ts: new IotApi.TelemetryApi(iotBaseUrl, this.axiosInstance),
+                opc: new IotApi.OpcuaApi(iotBaseUrl, this.axiosInstance),
+            },
+            wd: {
+                gis: new GISApi(domainWDBaseUrl, this.axiosInstance),
+                online: new OnlineApi(domainWDBaseUrl, this.axiosInstance),
+                alarmLog: new AlarmLogApi(domainWDBaseUrl, this.axiosInstance),
+                alarmConfig: new AlarmConfigApi(domainWDBaseUrl, this.axiosInstance),
+                indicatorConfig: new IndicatorConfigApi(domainWDBaseUrl, this.axiosInstance),
+            },
             scenario: {
                 manager: new ScenarioApi.ScenarioManagerApi(scenarioBaseUrl, this.axiosInstance),
                 library: new ScenarioApi.LibraryApi(scenarioBaseUrl, this.axiosInstance),
@@ -125,7 +164,11 @@ export class ApiHelperExtend extends ApiHelper {
             },
             organization: new OrganizationManangerApi(organizationUrl, this.axiosInstance),
             global_result_service: {
-                network: new NetworkApi(globalResultServiceBaseUrl, this.axiosInstance),
+                wd: new UrbanWdResultAnalysisApi(globalResultServiceBaseUrl, this.axiosInstance),
+                mesh2D: new M2DApi(globalResultServiceBaseUrl, this.axiosInstance),
+            },
+            global_model_configuration_service: {
+                legend: new LegendApi(globalModelConfigurationServiceBaseUrl, this.axiosInstance),
             },
         }
     }
