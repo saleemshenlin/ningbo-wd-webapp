@@ -3,7 +3,7 @@ import App from './App.vue'
 import router from './router'
 import { createPinia } from 'pinia'
 import '@arco-design/web-vue/dist/arco.css'
-import { ApiHelperExtend, API } from './api/api'
+import { API, apiHelper } from '@/api/api'
 import ArcoVue, { Message } from '@arco-design/web-vue'
 import { Helper } from '@dhicn/helper'
 import { name } from '../package.json'
@@ -26,8 +26,6 @@ const pinia = createPinia()
 const vueApp = createApp(App)
 
 // #region prepare api
-/***!!!TODO */
-const apiHelper = new ApiHelperExtend()
 
 vueApp.provide(API, apiHelper)
 
