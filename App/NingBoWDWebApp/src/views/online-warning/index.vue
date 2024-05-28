@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import ResultMap from '@/components/result-map/index.vue'
+import ResultMap from '@/components/map/index.vue'
 import { inject, onMounted, onUnmounted, ref, Ref } from 'vue'
 import { API, ApiHelperExtend } from '@/api/api'
 import { useAlarmLogApiStore, useOnlineApiStore } from 'dhi-dss-api-store/wd-domain'
@@ -18,8 +18,8 @@ const timer = ref(0)
 const $resultMap: Ref<InstanceType<typeof ResultMap> | null> = ref(null)
 
 onMounted(async () => {
-    await onlineStore.fetchLatestAutoRunScenario($api.api.scenario.library) // 获得最后一个方案ID
-    resultStore.fetchResultItemList($api.api.global_model_configuration_service.legend)
+    await onlineStore.fetchLatestAutoRunScenario($api.scenario.library) // 获得最后一个方案ID
+    resultStore.fetchResultItemList($api.global_model_configuration_service.legend)
     initialTaskSchedule()
     await fetchOnlineData()
     console.debug('onMounted :>> ', 'page-online_warning')
@@ -31,8 +31,8 @@ onUnmounted(() => {
 })
 
 const fetchOnlineData = async () => {
-    await alarmStore.fetchAlarmLog($api.api.wd.alarmLog, requestAlarmLog)
-    await wdOnlineStore.fetchTankStorage($api.api.wd.online)
+    await alarmStore.fetchAlarmLog($api.alarmLog, requestAlarmLog)
+    await wdOnlineStore.fetchTankStorage($api.online)
     // await onlineStore.fetchHYTankStorage($api.tz_online.hd, hyTank)
     // await onlineStore.fetchDailyWaterVolume($api.tz_online.hd)
 }
@@ -47,7 +47,7 @@ const initialTaskSchedule = () => {
             doPopupDataUpdate()
             if (minutes === FetchLatestScenarioMinute) {
                 // 20分钟 更新方案
-                onlineStore.fetchLatestAutoRunScenario($api.api.scenario.library)
+                onlineStore.fetchLatestAutoRunScenario($api.scenario.library)
             }
         }
     }, 60 * 1000)
@@ -69,7 +69,7 @@ const doPopupDataUpdate = () => {
     <a-layout-content class="app-content page-online_warning">
         <result-map
             ref="$resultMap"
-            :scenario="onlineStore.latestScenario"
+            :scenario="onlineStore.latestScenario!"
             :is-online="true"
             @popup-render="doPopupDataUpdate"
         ></result-map>

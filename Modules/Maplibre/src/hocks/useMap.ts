@@ -24,12 +24,16 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
      * 创建地图
      */
     const createScene = () => {
-        scene.value = new Map({
+        const opt = {
             container: $map.value!,
             style: props.source,
             center: props.center,
             zoom: props.zoom,
-        }) as any
+        }
+        if (props.options) {
+            Object.assign(opt, props.options)
+        }
+        scene.value = new Map(opt) as any
     }
 
     /**
@@ -58,10 +62,13 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
         if (existLayer !== undefined) {
             scene.value!.removeLayer(layerId)
         }
-        scene.value!.addLayer({
-            ...config.style,
-            id: layerId,
-        })
+        scene.value!.addLayer(
+            {
+                ...config.style,
+                id: layerId,
+            },
+            config.beforeId,
+        )
         layerList.value.push(layerId)
         if (config.fitness) {
             const bounds = (existSource ?? scene.value!.getSource(layerId)).bounds
@@ -102,23 +109,29 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
         if (existLayer !== undefined) {
             scene.value!.removeLayer(layerId)
         }
-        scene.value!.addLayer({
-            ...config.style,
-            id: layerId,
-        })
+        scene.value!.addLayer(
+            {
+                ...config.style,
+                id: layerId,
+            },
+            config.beforeId,
+        )
         layerList.value.push(layerId)
         if (config.fitness) {
             const bounds = geojson.bbox
                 ? (geojson.bbox as [number, number, number, number])
                 : (bbox(geojson) as [number, number, number, number]) // 使用 turf.js 来计算 bounds（需要先安装 @turf/bbox 包）
             scene.value!.fitBounds(bounds, {
-                padding: 50, // 可选参数，表示在边界周围增加的像素间距，以防止边界紧贴视图边缘
+                padding: 100, // 可选参数，表示在边界周围增加的像素间距，以防止边界紧贴视图边缘
             })
         }
         if (config.withArrow) {
-            scene.value!.addLayer({
-                ...config.withArrow,
-            })
+            scene.value!.addLayer(
+                {
+                    ...config.withArrow,
+                },
+                config.beforeId,
+            )
             layerList.value.push(config.withArrow.id)
         }
         if (config.popup !== undefined) {
@@ -150,7 +163,9 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
      */
     const renderResultLayer = (resultSet: IMapResult, modelLayers: Record<string, IBasicGIS>) => {
         const { layerId, idList, data, timeList } = resultSet
-        if (!Object.keys(modelLayers).includes(layerId)) {
+        if (layerId === '') {
+            return
+        } else if (!Object.keys(modelLayers).includes(layerId)) {
             logger.error('renderModelLayer geojson not found', layerId)
         }
         const layerConfig = modelLayers[layerId]
@@ -226,6 +241,13 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
                             1,
                             0,
                         ])
+                        break
+                    case 'circle':
+                        const styleCircle = layer.getPaintProperty('circle-color') as any
+                        if (isArray(styleCircle)) {
+                            changeRenderIndex(styleCircle, index)
+                        }
+                        scene.value!.setPaintProperty(layerId, 'circle-color', styleCircle)
                         break
                     // todo 其他类型
                 }

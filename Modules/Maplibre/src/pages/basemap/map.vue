@@ -8,8 +8,9 @@
 import type { IBasicGIS, IMapConfig, IMapResult } from '../../types'
 import { useMap } from '../../hocks/useMap'
 import { onMounted, ref, watch } from 'vue'
-import { Map } from 'maplibre-gl'
+import { GeoJSONSource, Map } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
+import { ANIMATION_POINT } from '../../const'
 
 const $map = ref<HTMLDivElement | null>(null)
 const props = withDefaults(
@@ -17,6 +18,7 @@ const props = withDefaults(
         config: IMapConfig
         basicLayers: Record<string, IBasicGIS>
         modelLayers: Record<string, IBasicGIS>
+        visibleLayers: { total: string[]; checked: string[] }
         resultSet: IMapResult
     }>(),
     {
@@ -27,6 +29,7 @@ const props = withDefaults(
         }),
         basicLayers: () => ({}),
         modelLayers: () => ({}),
+        visibleLayers: () => ({ total: [], checked: [] }),
         resultSet: () => ({
             resultItem: '',
             layerId: '',
@@ -41,13 +44,11 @@ const props = withDefaults(
  * 高亮要素，string[], “${图层}:${id}”
  */
 const highlightIds = defineModel<string[]>('highlightIds', { default: [] })
+/**
+ * 动画点要素
+ */
+const animationPoints = defineModel<GeoJSON.Feature[]>('animationPoints', { default: [] })
 const loading = defineModel<Boolean>('loading', { default: false })
-const visibleLayers = defineModel<{ total: string[]; checked: string[] }>('visibleLayers', {
-    default: {
-        total: [],
-        checked: [],
-    },
-})
 
 const { scene, renderBasicLayers, renderResultLayer, updateResultStep, toggleLayerVisible } =
     useMap($map, {
@@ -59,8 +60,8 @@ const { scene, renderBasicLayers, renderResultLayer, updateResultStep, toggleLay
  * @param l 图层名称
  */
 const checkLayerVisible = (l: string) => {
-    const checked = visibleLayers.value.total.includes(l) && visibleLayers.value.checked.includes(l)
-    return !visibleLayers.value.total.includes(l) || checked
+    const checked = props.visibleLayers.total.includes(l) && props.visibleLayers.checked.includes(l)
+    return !props.visibleLayers.total.includes(l) || checked
 }
 
 /**
@@ -93,10 +94,10 @@ watch(
 )
 
 watch(
-    visibleLayers,
+    props.visibleLayers,
     (layers) => {
         if (scene.value) {
-            visibleLayers.value.total.forEach((layerId) => {
+            props.visibleLayers.total.forEach((layerId) => {
                 toggleLayerVisible(layerId, layers.checked.includes(layerId))
             })
         }
@@ -127,14 +128,21 @@ watch(
     { deep: true },
 )
 
+watch(animationPoints, (points) => {
+    if (scene.value === null) return
+    const source = scene.value.getSource(ANIMATION_POINT) as GeoJSONSource
+    if (source === undefined) return
+    source.setData({ type: 'FeatureCollection', features: points })
+})
+
 onMounted(async () => {
     loading.value = true
     // logger.debug('onMounted', scene)
     emit('prepare', scene.value! as Map)
     scene.value!.on('load', () => {
-        emit('load', scene.value! as Map)
         renderBasicLayers(props.basicLayers, onLayerLoad)
         loading.value = false
+        emit('load', scene.value! as Map)
     })
 })
 </script>

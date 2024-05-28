@@ -1,4 +1,4 @@
-import type { AddLayerObject, StyleSpecification } from 'maplibre-gl'
+import type { AddLayerObject, MapOptions, StyleSpecification } from 'maplibre-gl'
 
 export interface IPORJ4 {
     name: string
@@ -9,6 +9,7 @@ export interface IMapConfig {
     source: string | StyleSpecification
     center: [number, number]
     zoom: number
+    options?: MapOptions
 }
 
 export interface IMapResult {
@@ -28,4 +29,5 @@ export interface IBasicGIS {
     popup?: (f: GeoJSON.Feature) => HTMLDivElement | null
     fitness?: boolean
     withArrow?: AddLayerObject
+    beforeId?: string
 }

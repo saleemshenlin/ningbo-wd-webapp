@@ -34,22 +34,22 @@ export const useResult = defineStore(StoreName, {
         async prepareTileResult($api: ApiHelperExtend, scenarioId: string) {
             this.loading = true
             try {
-                const rep = await $api.api.global_result_service.mesh2D.apiV2Result2dDynamicGet(
-                    scenarioId,
-                )
-                if (rep.data) {
-                    const { style, time } = rep.data
-                    const start = dayjs(time!.startTime)
-                    const timeList: string[] = []
-                    for (let index = 0; index < time!.timeNo!; index++) {
-                        timeList.push(
-                            start.add(index * time!.timeStep!, 'second').format(minuteFormat03),
-                        )
-                    }
-                    this.resultStyle = style!
-                    this.timeSeriesList = { time: timeList }
-                    // logger.debug('prepare2DResult result', style)
-                }
+                // const rep = await $api.global_result_service.mesh2D.apiV2Result2dDynamicGet(
+                //     scenarioId,
+                // )
+                // if (rep.data) {
+                //     const { style, time } = rep.data
+                //     const start = dayjs(time!.startTime)
+                //     const timeList: string[] = []
+                //     for (let index = 0; index < time!.timeNo!; index++) {
+                //         timeList.push(
+                //             start.add(index * time!.timeStep!, 'second').format(minuteFormat03),
+                //         )
+                //     }
+                //     this.resultStyle = style!
+                //     this.timeSeriesList = { time: timeList }
+                //     // logger.debug('prepare2DResult result', style)
+                // }
             } catch (error) {
                 logger.error(StoreName, 'prepare2DResult', error)
             } finally {
@@ -81,7 +81,7 @@ export const useResult = defineStore(StoreName, {
                 } else {
                     const domainStore = useUrbanWdResultAnalysisApiStore(getActivePinia())
                     await domainStore.fetchTimeSeriesData(
-                        $api.api.global_result_service.wd,
+                        $api.global_result_service.urban_wd,
                         scenario,
                         resultItem,
                     )
@@ -141,7 +141,7 @@ export const useResult = defineStore(StoreName, {
                     legendStore.resultItemMap = cache
                 } else {
                     await legendStore.fetchResultItemList(
-                        $api.api.global_model_configuration_service.legend,
+                        $api.global_model_configuration_service.legend,
                     )
                     const legends = toRaw(legendStore.resultItemMap)
                     userStore.localStorage.setItem('all-legend', legends)
@@ -164,7 +164,7 @@ export const useResult = defineStore(StoreName, {
                 const dataType = legend!.typeName!
                 this.classifyLegendList =
                     (await legendStore.fetchClassifyLegendData(
-                        $api.api.global_model_configuration_service.legend,
+                        $api.global_model_configuration_service.legend,
                         modelType,
                         dataType,
                     )) ?? []
@@ -192,7 +192,7 @@ export const useResult = defineStore(StoreName, {
                 if (dataType === WDModelResultEnum.Head) {
                     // 水池液位特殊处理
                     return await domainStore.fetchGetModelTSDataOfStructure(
-                        $api.api.global_result_service.wd,
+                        $api.global_result_service.urban_wd,
                         scenarioId,
                         modelId,
                         'Tank',
@@ -201,7 +201,7 @@ export const useResult = defineStore(StoreName, {
                     )
                 } else {
                     return await domainStore.fetchGetModelTSData(
-                        $api.api.global_result_service.wd,
+                        $api.global_result_service.urban_wd,
                         scenarioId,
                         modelId,
                         dataType,
