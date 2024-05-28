@@ -9,18 +9,17 @@ import { ModelResultBasicType } from '../ResultMap/config'
 
 interface IProps {
     dataSet: LegendItemDto[]
-    typeName: (typeName: string) => void
     formatterType?: (typeName: string) => string
 }
 const props = withDefaults(defineProps<IProps>(), {
     dataSet: () => [],
-    typeName: () => '',
     formatterType: (typeName: string) => typeName,
 })
 
-const emit = defineEmits(['clickResultItem'])
+const emit = defineEmits<{
+    (e: 'clickResultItem', typeName: string, dataType: string): void
+}>()
 const clickResultItem = (typeName: string, dataType: string) => {
-    props.typeName(typeName)
     emit('clickResultItem', typeName, dataType)
 }
 

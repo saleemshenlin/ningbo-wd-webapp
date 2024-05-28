@@ -5,6 +5,12 @@ import { UserState } from './type'
 import { defineStore } from 'pinia'
 import { Message } from '@arco-design/web-vue'
 import { getAuthFromStorage, tenantInfo } from './config'
+import { useProjectStore } from '../Project'
+import { useOnlineStore } from '../Online'
+import localforage from 'localforage'
+import { lfStore } from '@/main'
+import { useLegendApiStore } from 'dhi-dss-api-store/model-Configuration'
+import { useResult } from '../Result'
 
 export const useUserStore = defineStore('user', {
     state: (): UserState => ({
@@ -23,6 +29,10 @@ export const useUserStore = defineStore('user', {
                 !(this.user == null) &&
                 this.user?.name === getAuthFromStorage()?.user?.name
             )
+        },
+        localStorage() {
+            // init when first time
+            return lfStore
         },
     },
     actions: {
@@ -81,6 +91,17 @@ export const useUserStore = defineStore('user', {
                     }
                     this.setAuth(initAuth, this.api as ApiHelperExtend)
                     // app挂载前需要准备好的接口数据
+                    const onlineStore = useOnlineStore()
+                    await onlineStore.fetchLatestAutoRunScenario(
+                        (this.api as ApiHelperExtend).api.scenario.library,
+                    )
+                    const projectStore = useProjectStore()
+                    await projectStore.fetchBasicGIS(
+                        this.api as ApiHelperExtend,
+                        onlineStore.template!,
+                    )
+                    const resultStore = useResult()
+                    await resultStore.getAllResultItem(this.api as ApiHelperExtend)
                 }
             } else {
                 await router.replace('/login')
