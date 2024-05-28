@@ -33,15 +33,16 @@ export const useProjectStore = defineStore('project', {
             const gisStore = useGisQueryApiStore(getActivePinia())
             const gisOptions: WDResultType[] = ['wd-pipe', 'wd-junction', 'pump', 'valve', 'tank']
             if (!isEmpty(template)) {
-                const opts = [] as WDResultType[]
-                for (const opt of gisOptions) {
-                    const cache = (await userStore.localStorage.getItem(opt)) as string
-                    if (cache !== null && cache.length > 0) {
-                        gisStore.gisMap.set(opt, cache)
-                    } else {
-                        opts.push(opt)
-                    }
-                }
+                const opts = [...gisOptions] as WDResultType[]
+                // 暂时不用缓存
+                // for (const opt of gisOptions) {
+                //     const cache = (await userStore.localStorage.getItem(opt)) as string
+                //     if (cache !== null && cache.length > 0) {
+                //         gisStore.gisMap.set(opt, cache)
+                //     } else {
+                //         opts.push(opt)
+                //     }
+                // }
                 if (opts.length > 0) {
                     await gisStore.fetchGIS($api.gis, template.id, gisOptions)
                     for (const opt of opts) {

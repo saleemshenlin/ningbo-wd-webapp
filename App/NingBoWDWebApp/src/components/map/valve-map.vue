@@ -33,6 +33,7 @@ import { BASE_PIPE } from 'dhi-dss-mf-map-maplibre'
 import { mapConfig } from './config'
 import { useBasicGIS } from './useBasicGIS'
 import { reactive, ref } from 'vue'
+import { BaseMap } from 'dhi-dss-mf-map-maplibre/base-map'
 
 const { basicLayers } = useBasicGIS()
 const loading = ref(false)
