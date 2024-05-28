@@ -49,7 +49,7 @@ const queryValve = () => {
 
         accidentApiStore
             .findValves($api.accident, { items: params })
-            .then((res) => {
+            .then((res: any) => {
                 console.log('res>>>', res)
                 valveClosingAnalysisStore.valveInfo.valveTableData = res
             })
