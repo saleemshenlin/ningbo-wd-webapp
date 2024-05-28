@@ -10,7 +10,7 @@
     </div>
 </template>
 <script setup lang="ts">
-import { inject, reactive } from 'vue'
+import { inject, onMounted, reactive } from 'vue'
 import ValvePipeInfo from './valve-pipe-info.vue'
 import ValveMap from '@/components/map/valve-map.vue'
 import { useValveClosingAnalysisStore } from '@/store/ValveClosingAnalysis'
@@ -63,6 +63,11 @@ const queryValve = () => {
 const flyTo = (props: any) => {
     logger.debug('flyTo', props)
 }
+
+onMounted(() => {
+    valveClosingAnalysisStore.getValveTimeRangeAndPipeData($api.accident, id as string) // 基本信息和管道列表
+    valveClosingAnalysisStore.getValveData($api.accident, id as string) // 阀门列表
+})
 </script>
 
 <style lang="scss" scoped>
