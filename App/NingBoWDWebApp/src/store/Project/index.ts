@@ -43,37 +43,14 @@ export const useProjectStore = defineStore('project', {
                     }
                 }
                 if (opts.length > 0) {
-                    await gisStore.fetchGIS($api.api.gis, template.id, gisOptions)
+                    await gisStore.fetchGIS($api.gis, template.id, gisOptions)
                     for (const opt of opts) {
                         // 河道请求为river，数据存储使用 riverWaterLevel
                         const gis = gisStore.gisMap.get(opt)
                         userStore.localStorage.setItem(opt, gis as string)
                     }
                 }
-                await onlineStore.fetchAllDevice($api.api.wd.online)
-            }
-        },
-        async fetchWaterLevelIndicator($api: ApiHelperExtend) {
-            try {
-                const store = useConfigApiStore(getActivePinia())
-                const params = ['水池', '水厂']
-                const rep = await store.getIndicatorConfigList($api.api.wd.indicatorConfig, params)
-                // const rep = await $api.indicatorConfig.apiV1DomainWdConfigIndicatorListPost([
-                //     '水池',
-                //     '水厂',
-                // ])
-
-                if (rep.length > 0) {
-                    const indicators = rep.reduce<IndicatorInfo[]>((list, curr) => {
-                        const currentIndicators = curr.indicatorInfos?.filter(
-                            (i) => i.type === 'Waterlevel',
-                        ) as IndicatorInfo[]
-                        return [...list, ...currentIndicators]
-                    }, [])
-                    this.waterLevelIndicators = indicators
-                }
-            } catch (error) {
-                logger.debug('API', 'fetchWaterLevelIndicator error', error)
+                await onlineStore.fetchAllDevice($api.online)
             }
         },
     },

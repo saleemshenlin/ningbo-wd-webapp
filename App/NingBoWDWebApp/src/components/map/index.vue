@@ -5,7 +5,8 @@
             :basic-layers="basicLayers"
             :model-layers="modelLayers"
             :result-set="resultSet"
-            v-model:visibleLayers="visibleLayers"
+            :visibleLayers="visibleLayers"
+            v-model:animationPoints="animationPoints"
             v-model:loading="resultStore.loading"
             @load="onRendered"
             @prepare="onPrepare"
@@ -33,13 +34,13 @@
     </div>
 </template>
 <script lang="ts" setup>
+import type { Map } from 'maplibre-gl'
 import { BaseMap } from 'dhi-dss-mf-map-maplibre/base-map'
 import 'dhi-dss-mf-map-maplibre/dist/style.css'
 import { mapConfig } from './config'
-import { Map } from 'maplibre-gl'
 import { Scenario } from '@dhicn/domain-paas-sdk-ts/scenario-service'
 import { API, ApiHelperExtend } from '@/api/api'
-import { computed, inject, reactive, watch } from 'vue'
+import { computed, inject, reactive, ref, watch } from 'vue'
 import { useResult } from '@/store/Result'
 import {
     BASE_JUNCTION,
@@ -72,6 +73,8 @@ const legendStore = useLegendApiStore()
 const { basicLayers } = useBasicGIS()
 const { modelLayers, changeModelLayerStyle } = useModelGIS()
 const { activeItem, fetchResultItemData } = useResultItem()
+
+const animationPoints = ref<GeoJSON.Feature[]>([])
 
 const visibleLayers = reactive<{
     total: string[]
@@ -164,6 +167,9 @@ export default {
 
     .chartLine {
         padding: 0;
+    }
+    .maplibregl-ctrl-attrib {
+        display: none;
     }
 }
 .result-item {

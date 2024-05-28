@@ -93,7 +93,7 @@ export const useUserStore = defineStore('user', {
                     // app挂载前需要准备好的接口数据
                     const onlineStore = useOnlineStore()
                     await onlineStore.fetchLatestAutoRunScenario(
-                        (this.api as ApiHelperExtend).api.scenario.library,
+                        (this.api as ApiHelperExtend).scenario.library,
                     )
                     const projectStore = useProjectStore()
                     await projectStore.fetchBasicGIS(

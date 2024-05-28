@@ -18,7 +18,7 @@ export const homeRoutes: RouteRecordRaw[] = [
     {
         path: 'scenario',
         name: 'scenario',
-        component: () => import('@/components/not-found/index.vue'),
+        component: () => import('@/views/valve-closing/index.vue'),
         meta: {
             title: '方案模拟分析',
         },
