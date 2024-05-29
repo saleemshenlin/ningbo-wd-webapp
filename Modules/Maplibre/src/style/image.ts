@@ -66,6 +66,8 @@ export const fnPointImage = (
         layout: {
             'icon-image': props.imageName,
             'icon-size': props.size ?? 1,
+            'icon-overlap': 'always',
+            'icon-ignore-placement': true,
         },
     } as AddLayerObject
 

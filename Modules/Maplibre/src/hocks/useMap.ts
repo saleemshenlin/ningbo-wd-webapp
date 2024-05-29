@@ -94,7 +94,7 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
         // const time1 = dayjs()
         // logger.debug('renderGeoJSONLayer start', time1.toDate())
         // * 组装 4861要素*180时间步长 需要1.2s
-        const geojson = config.geojson!
+        const geojson = config.geojson! as GeoJSON.FeatureCollection
         const existSource = scene.value!.getSource(layerId) as GeoJSONSource
         if (existSource !== undefined) {
             existSource.setData(geojson)
@@ -117,7 +117,7 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
             config.beforeId,
         )
         layerList.value.push(layerId)
-        if (config.fitness) {
+        if (config.fitness && geojson && geojson.features && geojson.features.length > 0) {
             const bounds = geojson.bbox
                 ? (geojson.bbox as [number, number, number, number])
                 : (bbox(geojson) as [number, number, number, number]) // 使用 turf.js 来计算 bounds（需要先安装 @turf/bbox 包）
@@ -148,11 +148,14 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
     const renderBasicLayers = (
         basicLayers: Record<string, IBasicGIS>,
         onLoad?: (l: string) => void,
+        doFilter = false,
     ) => {
         Object.keys(basicLayers).forEach((layerId: string) => {
             // add Source
             const config = basicLayers[layerId]
-            renderGeoJSONLayer(layerId, config, onLoad)
+            if (!doFilter || (doFilter && config.refresh)) {
+                renderGeoJSONLayer(layerId, config, onLoad)
+            }
         })
     }
 
@@ -335,7 +338,7 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
             features?: MapGeoJSONFeature[] | undefined
         } & Object
         layerId: string
-        renderer: (f: Feature) => HTMLDivElement | null
+        renderer: (f: Feature, e: MapMouseEvent) => HTMLDivElement | null
         sourceLayer?: string
     }) => {
         const { e, layerId, renderer } = props
@@ -356,7 +359,7 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
                 break
             // * 其他类型再编辑
         }
-        const domContent = renderer(feature)
+        const domContent = renderer(feature, e)
         if (domContent instanceof HTMLElement) {
             // 高亮
             changeFeatureState({ source: layerId, id: feature.id }, { clicked: true })
@@ -381,7 +384,7 @@ export function useMap($map: Ref<HTMLDivElement | null>, props: IMapConfig) {
      */
     const initPopup = (
         layerId: string,
-        popup: (f: Feature) => HTMLDivElement | null,
+        popup: (f: Feature, e: MapMouseEvent) => HTMLDivElement | null,
         sourceLayer?: string,
     ) => {
         scene.value!.on('mouseenter', layerId, (e) => {

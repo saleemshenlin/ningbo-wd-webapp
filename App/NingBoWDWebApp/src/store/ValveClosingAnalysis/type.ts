@@ -7,6 +7,7 @@ export interface IState {
     recordValveInfo: IValveInfo
     editSubTag: boolean
     hasSubScenario: boolean
+    activeValve: WDApi.GisValveInfo | null
 }
 
 export interface IValveInfo {

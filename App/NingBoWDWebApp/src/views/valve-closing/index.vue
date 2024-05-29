@@ -1,16 +1,22 @@
 <template>
     <div class="valve-closing">
-        <valve-map class="valve-map"></valve-map>
+        <valve-map
+            class="valve-map"
+            :closing-valves="closingValves"
+            :closing-pipes="closingPipes"
+            :editing="valveClosingAnalysisStore.isMapEdit"
+            :active-closing-valve="activeClosingValve"
+            @select-pipe="onPipeSelected"
+        ></valve-map>
         <valve-pipe-info
             class="valve-info"
             :query-valve="queryValve"
             :loading="loadingObj"
-            :fly-to="flyTo"
         ></valve-pipe-info>
     </div>
 </template>
 <script setup lang="ts">
-import { inject, onMounted, reactive } from 'vue'
+import { computed, inject, onMounted, reactive, ref } from 'vue'
 import ValvePipeInfo from './valve-pipe-info.vue'
 import ValveMap from '@/components/map/valve-map.vue'
 import { useValveClosingAnalysisStore } from '@/store/ValveClosingAnalysis'
@@ -19,6 +25,8 @@ import { BurstPipeValvesItem } from '@dhicn/domain-paas-sdk-ts/wd-domain'
 import { useAccidentApiStore } from 'dhi-dss-api-store/wd-domain'
 import { getActivePinia } from 'pinia'
 import { API, ApiHelperExtend } from '@/api/api'
+import { transfer } from 'dhi-dss-mf-map-maplibre/proj'
+import type { MapMouseEvent } from 'maplibre-gl'
 
 const valveClosingAnalysisStore = useValveClosingAnalysisStore()
 const accidentApiStore = useAccidentApiStore(getActivePinia())
@@ -60,13 +68,103 @@ const queryValve = () => {
     }
 }
 
-const flyTo = (props: any) => {
-    logger.debug('flyTo', props)
+/**
+ * 响应管道点击事件
+ * @param f
+ * @param e
+ */
+const onPipeSelected = (f: GeoJSON.Feature<GeoJSON.LineString>, e: MapMouseEvent) => {
+    valveClosingAnalysisStore.valveInfo.pipeTableData.push({
+        MUID: f.properties!.MUID,
+        Diameter: f.properties!.Diameter,
+        x: e.lngLat.lng,
+        y: e.lngLat.lat,
+        // paths: f.geometry.paths,
+        geometry: f.geometry,
+        attributes: f.properties,
+    })
+}
+
+/**
+ * 将阀门列表转换成GeoJSON.Feature
+ */
+const closingValves = computed(() => {
+    const features = valveClosingAnalysisStore.valveInfo.valveTableData!.map((v) => {
+        return {
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [v.x!, v.y!],
+            },
+            properties: { ...v },
+        } as GeoJSON.Feature<GeoJSON.Point>
+    })
+    return features
+})
+
+/**
+ * 将管线列表转换成GeoJSON.Feature
+ */
+const closingPipes = computed(() => {
+    const features = valveClosingAnalysisStore.valveInfo.pipeTableData.map(
+        (p: { paths: [number, number][][]; MUID: string; geometry: GeoJSON.LineString }) => {
+            if (p.paths) {
+                return {
+                    type: 'Feature',
+                    geometry: {
+                        type: 'LineString',
+                        coordinates: p.paths[0].map((point) => {
+                            const newPoint = transfer('EPSG:3857', 'EPSG:4326', point)
+                            return newPoint
+                        }),
+                    },
+                    properties: { MUID: p.MUID },
+                } as GeoJSON.Feature<GeoJSON.LineString>
+            } else {
+                return {
+                    type: 'Feature',
+                    geometry: p.geometry,
+                    properties: { MUID: p.MUID },
+                } as GeoJSON.Feature<GeoJSON.LineString>
+            }
+        },
+    )
+    return features
+})
+
+/**
+ * 需要定位的阀门
+ */
+const activeClosingValve = computed(() => {
+    if (valveClosingAnalysisStore.activeValve !== null) {
+        return {
+            type: 'Feature',
+            geometry: {
+                type: 'Point',
+                coordinates: [
+                    valveClosingAnalysisStore.activeValve.x,
+                    valveClosingAnalysisStore.activeValve.y,
+                ],
+            },
+            properties: {
+                ...valveClosingAnalysisStore.activeValve,
+            },
+        } as GeoJSON.Feature<GeoJSON.Point>
+    } else {
+        return null
+    }
+})
+
+/**
+ * 获取管道列表和阀门列表
+ */
+const fetchClosingValveAndPipe = () => {
+    valveClosingAnalysisStore.getValveTimeRangeAndPipeData($api.accident, id as string) // 基本信息和管道列表
+    valveClosingAnalysisStore.getValveData($api.accident, id as string) // 阀门列表
 }
 
 onMounted(() => {
-    valveClosingAnalysisStore.getValveTimeRangeAndPipeData($api.accident, id as string) // 基本信息和管道列表
-    valveClosingAnalysisStore.getValveData($api.accident, id as string) // 阀门列表
+    fetchClosingValveAndPipe()
 })
 </script>
 

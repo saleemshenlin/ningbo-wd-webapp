@@ -1,9 +1,18 @@
 import { useGisQueryApiStore } from 'dhi-dss-api-store/gis-service'
-import { BASE_PIPE, BASE_JUNCTION, IBasicGIS } from 'dhi-dss-mf-map-maplibre'
-import { fnSimpleLine, fnSimplePoint } from 'dhi-dss-mf-map-maplibre/style'
+import { BASE_PIPE, BASE_JUNCTION, IBasicGIS, ANIMATION_POINT } from 'dhi-dss-mf-map-maplibre'
+import {
+    PulsingDot,
+    fnPointImage,
+    fnSimpleLine,
+    fnSimplePoint,
+} from 'dhi-dss-mf-map-maplibre/style'
 import { getActivePinia } from 'pinia'
 import { reactive } from 'vue'
+import type { Map } from 'maplibre-gl'
+import ValvePNG from '@/assets/map/valve.png'
 
+export const BASE_CLOSING_VALVE = 'BASE_CLOSING_VALVE'
+export const BASE_CLOSING_PIPE = 'BASE_CLOSING_PIPE'
 export function useBasicGIS() {
     const gisQueryApiStore = useGisQueryApiStore(getActivePinia())
     const basicLayers = reactive<Record<string, IBasicGIS>>({
@@ -22,16 +31,38 @@ export function useBasicGIS() {
                     '#FF7272',
                     ['==', ['get', 'AssetName'], '四期'],
                     '#1490FF',
-                    '#165DFF', // 其他情况的颜色
+                    '#7dd61b', // 其他情况的颜色
                 ],
                 highlightColor: '#ff0000',
                 width: 3,
             }),
-            popup: (f) => {
-                return null
-            },
             fitness: true,
-            promoteId: 'Muid',
+            promoteId: 'MUID',
+        } as IBasicGIS,
+        [BASE_CLOSING_PIPE]: {
+            geojson: { type: 'FeatureCollection', features: [] },
+            style: fnSimpleLine({
+                id: BASE_CLOSING_PIPE,
+                sourceName: BASE_CLOSING_PIPE,
+                color: '#b319ff',
+                highlightColor: '#ff0000',
+                width: 3,
+            }),
+            promoteId: 'MUID',
+            refresh: true,
+        } as IBasicGIS,
+        [ANIMATION_POINT]: {
+            geojson: {
+                type: 'FeatureCollection',
+                features: [],
+            },
+            style: fnPointImage({
+                id: ANIMATION_POINT,
+                sourceName: ANIMATION_POINT,
+                imageName: 'highlight-point',
+                size: 0.6,
+            }),
+            promoteId: 'id',
         } as IBasicGIS,
         [BASE_JUNCTION]: {
             geojson: JSON.parse(gisQueryApiStore.gisMap.get('wd-junction')!),
@@ -68,15 +99,54 @@ export function useBasicGIS() {
                     },
                 },
             ),
-            popup: (f) => {
-                return null
-            },
             fitness: true,
             promoteId: 'Muid',
         } as IBasicGIS,
+        [BASE_CLOSING_VALVE]: {
+            geojson: { type: 'FeatureCollection', features: [] },
+            style: fnPointImage({
+                id: BASE_CLOSING_VALVE,
+                sourceName: BASE_CLOSING_VALVE,
+                imageName: 'closing-valve',
+                size: 0.5,
+            }),
+            promoteId: 'id',
+            fitness: true,
+            refresh: true,
+        } as IBasicGIS,
     })
+
+    /**
+     * 添加图片到地图
+     */
+    const addImage = async (map: Map) => {
+        const loadImageAndAddToMap = async (
+            map: Map,
+            imageUrl: string,
+            imageName: string,
+            sdf: boolean = true,
+        ) => {
+            const image = await map.loadImage(imageUrl)
+            map.addImage(imageName, image.data, { sdf })
+        }
+
+        // await loadImageAndAddToMap(map, ArrowPNG, 'pipe-arrow')
+        await loadImageAndAddToMap(map, ValvePNG, 'closing-valve', false) // false 不透明
+        // await loadImageAndAddToMap(map, OutletPNG, 'outlet', false) // false 不透明
+        // await loadImageAndAddToMap(map, GatePNG, 'gate', false) // false 不透明
+        // await loadImageAndAddToMap(map, GatePNG, 'gate', false)
+        // await loadImageAndAddToMap(map, ManholePNG, 'manhole', false)
+        // await loadImageAndAddToMap(map, SensitivePoint1PNG, 'sensitive-point-1', false)
+        // await loadImageAndAddToMap(map, SensitivePoint2PNG, 'sensitive-point-2', false)
+        // await loadImageAndAddToMap(map, SensitivePoint3PNG, 'sensitive-point-3', false)
+
+        // 高亮点
+        const pulsingDot = new PulsingDot(map)
+        map.addImage('highlight-point', pulsingDot, { pixelRatio: 2 })
+    }
 
     return {
         basicLayers,
+        addImage,
     }
 }
