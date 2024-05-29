@@ -1,4 +1,4 @@
-import type { AddLayerObject, MapOptions, StyleSpecification } from 'maplibre-gl'
+import type { AddLayerObject, MapMouseEvent, MapOptions, StyleSpecification } from 'maplibre-gl'
 
 export interface IPORJ4 {
     name: string
@@ -26,8 +26,9 @@ export interface IBasicGIS {
     geojson?: GeoJSON.GeoJSON
     url?: string
     style: AddLayerObject
-    popup?: (f: GeoJSON.Feature) => HTMLDivElement | null
+    popup?: (f: GeoJSON.Feature, e: MapMouseEvent) => HTMLDivElement | null
     fitness?: boolean
     withArrow?: AddLayerObject
     beforeId?: string
+    refresh?: boolean // 用于判断是否需要刷新
 }

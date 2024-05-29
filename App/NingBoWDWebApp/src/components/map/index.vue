@@ -70,7 +70,7 @@ const $api = inject(API) as ApiHelperExtend
 
 const resultStore = useResult()
 const legendStore = useLegendApiStore()
-const { basicLayers } = useBasicGIS()
+const { basicLayers, addImage } = useBasicGIS()
 const { modelLayers, changeModelLayerStyle } = useModelGIS()
 const { activeItem, fetchResultItemData } = useResultItem()
 
@@ -131,6 +131,7 @@ const onStepChange = (props: { index: number }) => {
 
 /** 地图渲染前的准备工作，加载图片 */
 const onPrepare = async (map: Map) => {
+    addImage(map)
     logger.debug('onRendered v2', map)
     map.on('click', (e) => {
         logger.debug('map click', e)

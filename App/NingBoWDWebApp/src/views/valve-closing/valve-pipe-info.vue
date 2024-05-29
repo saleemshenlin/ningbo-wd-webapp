@@ -12,7 +12,6 @@ import { Message, TableData } from '@arco-design/web-vue'
 interface IProps {
     loading: ILoading
     queryValve: () => void
-    flyTo: (x: string | number, y: string | number) => void
 }
 
 const props = withDefaults(defineProps<IProps>(), {
@@ -229,7 +228,7 @@ const changeEndTime = (
                 <template #location="{ record }">
                     <a-button
                         type="text"
-                        @click="props.flyTo(record.x, record.y)"
+                        @click="valveClosingAnalysisStore.activeValve = record"
                         :disabled="valveClosingAnalysisStore.hasSubScenario"
                     >
                         <template #icon>

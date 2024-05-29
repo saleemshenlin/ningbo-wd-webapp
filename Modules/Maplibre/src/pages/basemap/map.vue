@@ -11,6 +11,7 @@ import { onMounted, ref, watch } from 'vue'
 import { GeoJSONSource, Map } from 'maplibre-gl'
 import 'maplibre-gl/dist/maplibre-gl.css'
 import { ANIMATION_POINT } from '../../const'
+import { logger } from '../../helper/showError'
 
 const $map = ref<HTMLDivElement | null>(null)
 const props = withDefaults(
@@ -101,6 +102,14 @@ watch(
                 toggleLayerVisible(layerId, layers.checked.includes(layerId))
             })
         }
+    },
+    { deep: true },
+)
+
+watch(
+    props.basicLayers,
+    (layers) => {
+        renderBasicLayers(layers, onLayerLoad, true)
     },
     { deep: true },
 )

@@ -21,6 +21,7 @@ export const useValveClosingAnalysisStore = defineStore('valveClosingAnalysis', 
         },
         editSubTag: false, // 关阀调度方案编辑
         hasSubScenario: false, // 是否有关阀调度方案
+        activeValve: null, // 需要定位的阀门
     }),
     getters: {},
     actions: {
